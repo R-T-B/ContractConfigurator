@@ -211,14 +211,13 @@ namespace ContractConfigurator.ExpressionParser
             {
                 filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
             }
-            CelestialBody sun = filteredBodies[0];
-            if (cb == sun)
+            if (cb.isStar || cb.pqsController == null)
             {
                 return CelestialBodyType.SUN;
             }
 
             // Add a special case for barycenters (Sigma binary)
-            if (cb.referenceBody == sun || cb.referenceBody.Radius < BARYCENTER_THRESHOLD)
+            if (cb.referenceBody.isStar || cb.referenceBody.Radius < BARYCENTER_THRESHOLD)
             {
                 // For barycenters, the biggest one is a planet, the rest are moons.
                 if (cb.referenceBody.Radius < BARYCENTER_THRESHOLD)
