@@ -116,7 +116,12 @@ namespace ContractConfigurator
 
         IEnumerator<YieldInstruction> LoadAllBodyInfo()
         {
-            foreach (YieldInstruction ins in FlightGlobals.Bodies.SelectMany<CelestialBody, YieldInstruction>(LoadBodyInfo))
+            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
+            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
+            {
+                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
+            }
+            foreach (YieldInstruction ins in filteredBodies.SelectMany<CelestialBody, YieldInstruction>(LoadBodyInfo))
             {
                 yield return ins;
             }

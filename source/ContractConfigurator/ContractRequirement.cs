@@ -61,7 +61,7 @@ namespace ContractConfigurator
         ///     - invertRequirement
         /// </summary>
         /// <param name="configNode">Config node to load from</param>
-        /// <returns>Whether the load was successful or not.</returns>
+        /// <returns>Whether the load was successful or not.</returns>Bodiess
         public virtual bool LoadFromConfig(ConfigNode configNode)
         {
             bool valid = true;
@@ -87,8 +87,13 @@ namespace ContractConfigurator
             {
                 configNode.AddValue("targetBody", "@/targetBody");
             }
+            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
+            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
+            {
+                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
+            }
             valid &= ConfigNodeUtil.ParseValue<CelestialBody>(configNode, "targetBody", x => _targetBody = x, this, (CelestialBody)null,
-                x => allowKerbin || Validation.NE(x.name, FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).FirstOrDefault().name));
+                x => allowKerbin || Validation.NE(x.name, filteredBodies.Where(cb => cb.isHomeWorld).FirstOrDefault().name));
 
             // By default, do not check the requirement for active contracts
             valid &= ConfigNodeUtil.ParseValue<bool>(configNode, "checkOnActiveContract", x => checkOnActiveContract = x, this, false);

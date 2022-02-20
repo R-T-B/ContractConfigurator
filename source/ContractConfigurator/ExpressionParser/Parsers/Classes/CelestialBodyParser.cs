@@ -79,7 +79,12 @@ namespace ContractConfigurator.ExpressionParser
             RegisterMethod(new Method<CelestialBody, CelestialBody>("Parent", cb => cb != null ? cb.referenceBody : null));
             RegisterMethod(new Method<CelestialBody, List<CelestialBody>>("Children", cb => cb != null ? cb.orbitingBodies.ToList() : new List<CelestialBody>()));
             RegisterMethod(new Method<CelestialBody, List<PQSCity>>("PQSCities", cb => cb != null ? cb.GetComponentsInChildren<PQSCity>(true).ToList() : new List<PQSCity>()));
-            RegisterMethod(new Method<CelestialBody, int>("Index", cb => FlightGlobals.Bodies.IndexOf(cb)));
+            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
+            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
+            {
+                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
+            }
+            RegisterMethod(new Method<CelestialBody, int>("Index", cb => filteredBodies.IndexOf(cb)));
 
             RegisterMethod(new Method<CelestialBody, List<Biome>>("Biomes", cb => cb != null && cb.BiomeMap != null ?
                 cb.BiomeMap.Attributes.Select(att => new Biome(cb, att.name)).ToList() : new List<Biome>()));
@@ -91,9 +96,9 @@ namespace ContractConfigurator.ExpressionParser
             RegisterMethod(new Method<CelestialBody, double>("RemoteTechCoverage", cb => cb != null ? RemoteTechCoverage(cb) : 0.0d, false));
             RegisterMethod(new Method<CelestialBody, string, double>("SCANsatCoverage", SCANsatCoverage, false));
 
-            RegisterGlobalFunction(new Function<CelestialBody>("HomeWorld", () => FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).First()));
-            RegisterGlobalFunction(new Function<CelestialBody>("Sun", () => FlightGlobals.Bodies[0]));
-            RegisterGlobalFunction(new Function<List<CelestialBody>>("AllBodies", () => FlightGlobals.Bodies.Where(cb => cb != null && cb.Radius >= BARYCENTER_THRESHOLD).ToList()));
+            RegisterGlobalFunction(new Function<CelestialBody>("HomeWorld", () => filteredBodies.Where(cb => cb.isHomeWorld).First()));
+            RegisterGlobalFunction(new Function<CelestialBody>("Sun", () => filteredBodies[0]));
+            RegisterGlobalFunction(new Function<List<CelestialBody>>("AllBodies", () => filteredBodies.Where(cb => cb != null && cb.Radius >= BARYCENTER_THRESHOLD).ToList()));
             RegisterGlobalFunction(new Function<List<CelestialBody>>("OrbitedBodies", () => BodiesForItem(ProgressItem.ORBITED).ToList(), false));
             RegisterGlobalFunction(new Function<List<CelestialBody>>("LandedBodies", () => BodiesForItem(ProgressItem.LANDED).ToList(), false));
             RegisterGlobalFunction(new Function<List<CelestialBody>>("EscapedBodies", () => BodiesForItem(ProgressItem.ESCAPED).ToList(), false));
@@ -201,8 +206,12 @@ namespace ContractConfigurator.ExpressionParser
             {
                 return CelestialBodyType.NOT_APPLICABLE;
             }
-
-            CelestialBody sun = FlightGlobals.Bodies[0];
+            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
+            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
+            {
+                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
+            }
+            CelestialBody sun = filteredBodies[0];
             if (cb == sun)
             {
                 return CelestialBodyType.SUN;

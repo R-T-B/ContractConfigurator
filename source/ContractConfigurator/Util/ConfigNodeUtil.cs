@@ -945,7 +945,12 @@ namespace ContractConfigurator
 
         public static CelestialBody ParseCelestialBodyValue(string celestialName)
         {
-            CelestialBody result = FlightGlobals.Bodies.Where(cb => cb.name == celestialName).FirstOrDefault();
+            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
+            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
+            {
+                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
+            }
+            CelestialBody result = filteredBodies.Where(cb => cb.name == celestialName).FirstOrDefault();
             if (result == null)
             {
                 throw new ArgumentException("'" + celestialName + "' is not a valid CelestialBody.");

@@ -34,13 +34,17 @@ namespace ContractConfigurator.ExpressionParser
 
             RegisterMethod(new Method<Biome, List<Location>>("DifficultLocations", biome => biome == null ?
                 new List<Location>() : BiomeTracker.GetDifficultLocations(biome.body, biome.biome).Select(v => new Location(biome.body, v.y, v.x)).ToList()));
-
+            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
+            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
+            {
+                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
+            }
             RegisterGlobalFunction(new Function<List<Biome>>("KSCBiomes", () => Biome.KSCBiomes.Select(b =>
-                new Biome(FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).Single(), b)).ToList(), false));
+                new Biome(filteredBodies.Where(cb => cb.isHomeWorld).Single(), b)).ToList(), false));
             RegisterGlobalFunction(new Function<List<Biome>>("MainKSCBiomes", () => Biome.MainKSCBiomes.Select(b =>
-                new Biome(FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).Single(), b)).ToList(), false));
+                new Biome(filteredBodies.Where(cb => cb.isHomeWorld).Single(), b)).ToList(), false));
             RegisterGlobalFunction(new Function<List<Biome>>("OtherKerbinBiomes", () => Biome.OtherKerbinBiomes.Select(b =>
-                new Biome(FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).Single(), b)).ToList(), false));
+                new Biome(filteredBodies.Where(cb => cb.isHomeWorld).Single(), b)).ToList(), false));
         }
 
         public BiomeParser()
