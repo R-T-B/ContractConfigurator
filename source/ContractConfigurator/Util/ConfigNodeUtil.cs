@@ -951,7 +951,7 @@ namespace ContractConfigurator
                 filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
             }
             CelestialBody result = filteredBodies.Where(cb => cb.name == celestialName).FirstOrDefault();
-            if (result == null)
+            if ((result == null) && (!celestialName.Equals("KopernicusWatchdog")))
             {
                 throw new ArgumentException("'" + celestialName + "' is not a valid CelestialBody.");
             }
