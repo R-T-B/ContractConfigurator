@@ -649,19 +649,25 @@ namespace ContractConfigurator
                             return true;
                         }
                     }
-
-                    LoggingUtil.LogError(obj, "{0}: Error parsing {1}", obj.ErrorPrefix(configNode), key);
-
-                    // Return immediately on deferred load error
-                    if (e.GetType() == typeof(DataNode.ValueNotInitialized))
+                    if (obj.ErrorPrefix(configNode).Contains("KopernicusWatchdog"))
                     {
-                        DataNode.ValueNotInitialized vni = e as DataNode.ValueNotInitialized;
-                        LoggingUtil.LogException(new Exception(StringBuilderCache.Format("Unknown identifier '@{0}'.", vni.key)));
-                        return false;
+                        valid = false;
                     }
-                    LoggingUtil.LogException(e);
+                    else
+                    {
+                        LoggingUtil.LogError(obj, "{0}: Error parsing {1}", obj.ErrorPrefix(configNode), key);
 
-                    valid = false;
+                        // Return immediately on deferred load error
+                        if (e.GetType() == typeof(DataNode.ValueNotInitialized))
+                        {
+                            DataNode.ValueNotInitialized vni = e as DataNode.ValueNotInitialized;
+                            LoggingUtil.LogException(new Exception(StringBuilderCache.Format("Unknown identifier '@{0}'.", vni.key)));
+                            return false;
+                        }
+                        LoggingUtil.LogException(e);
+
+                        valid = false;
+                    }
                 }
                 finally
                 {
