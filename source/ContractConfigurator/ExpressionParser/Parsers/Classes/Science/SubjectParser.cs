@@ -35,20 +35,16 @@ namespace ContractConfigurator.ExpressionParser
             RegisterMethod(new Method<ScienceSubject, float>("NextScienceReportValue", Science.NextScienceReportValue));
 
             RegisterMethod(new Method<ScienceSubject, string>("SituationString", SituationString));
-            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-            {
-                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-            }
-            RegisterGlobalFunction(new Function<List<ScienceSubject>>("AllScienceSubjects", () => Science.GetSubjects(filteredBodies).ToList(), false));
+
+            RegisterGlobalFunction(new Function<List<ScienceSubject>>("AllScienceSubjects", () => Science.GetSubjects(FlightGlobals.Bodies).ToList(), false));
             RegisterGlobalFunction(new Function<List<CelestialBody>, List<ScienceSubject>>("AllScienceSubjectsByBody", (cbs) => Science.GetSubjects(cbs).ToList(), false));
-            RegisterGlobalFunction(new Function<List<ScienceExperiment>, List<ScienceSubject>>("AllScienceSubjectsByExperiment", (exps) => Science.GetSubjects(filteredBodies, x => exps.Contains(x)).ToList(), false));
+            RegisterGlobalFunction(new Function<List<ScienceExperiment>, List<ScienceSubject>>("AllScienceSubjectsByExperiment", (exps) => Science.GetSubjects(FlightGlobals.Bodies, x => exps.Contains(x)).ToList(), false));
             RegisterGlobalFunction(new Function<List<Biome>, List<ScienceSubject>>("AllScienceSubjectsByBiome", (biomes) => Science.GetSubjects(biomes.GroupBy(b => b != null ? b.body : null).Select(grp => grp.First() != null ? grp.First().body : null), null, x => biomes.Any(b => b.biome == x)).ToList(), false));
 
             RegisterGlobalFunction(new Function<List<CelestialBody>, List<ScienceExperiment>, List<ScienceSubject>>("AllScienceSubjectsByBodyExperiment", (cbs, exps) => Science.GetSubjects(cbs, x => exps.Contains(x)).ToList(), false));
             RegisterGlobalFunction(new Function<List<Biome>, List<ScienceExperiment>, List<ScienceSubject>>("AllScienceSubjectsByBiomeExperiment", (biomes, exps) => Science.GetSubjects(biomes.GroupBy(b => b.body).Select(grp => grp.First().body), x => exps.Contains(x), x => biomes.Any(b => b.biome == x)).ToList(), false));
 
-            RegisterGlobalFunction(new Function<List<ScienceSubject>>("DifficultScienceSubjects", () => Science.GetSubjects(filteredBodies, null, null, true).ToList(), false));
+            RegisterGlobalFunction(new Function<List<ScienceSubject>>("DifficultScienceSubjects", () => Science.GetSubjects(FlightGlobals.Bodies, null, null, true).ToList(), false));
             RegisterGlobalFunction(new Function<List<CelestialBody>, List<ScienceSubject>>("DifficultScienceSubjectsByBody", (cbs) => Science.GetSubjects(cbs, null, null, true).ToList(), false));
         }
 

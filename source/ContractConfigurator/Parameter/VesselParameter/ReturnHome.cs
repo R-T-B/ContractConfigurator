@@ -23,12 +23,7 @@ namespace ContractConfigurator.Parameters
         public ReturnHome(string title)
             : base(title)
         {
-            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-            {
-                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-            }
-            CelestialBody home = filteredBodies.Where(cb => cb.isHomeWorld).First();
+            CelestialBody home = FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).First();
             this.title = title != null ? title : Localizer.Format("#cc.param.ReturnHome", home.displayName);
         }
 

@@ -79,26 +79,21 @@ namespace ContractConfigurator.ExpressionParser
             RegisterMethod(new Method<CelestialBody, CelestialBody>("Parent", cb => cb != null ? cb.referenceBody : null));
             RegisterMethod(new Method<CelestialBody, List<CelestialBody>>("Children", cb => cb != null ? cb.orbitingBodies.ToList() : new List<CelestialBody>()));
             RegisterMethod(new Method<CelestialBody, List<PQSCity>>("PQSCities", cb => cb != null ? cb.GetComponentsInChildren<PQSCity>(true).ToList() : new List<PQSCity>()));
-            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-            {
-                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-            }
-            RegisterMethod(new Method<CelestialBody, int>("Index", cb => filteredBodies.IndexOf(cb)));
+            RegisterMethod(new Method<CelestialBody, int>("Index", cb => FlightGlobals.Bodies.IndexOf(cb)));
 
             RegisterMethod(new Method<CelestialBody, List<Biome>>("Biomes", cb => cb != null && cb.BiomeMap != null ?
                 cb.BiomeMap.Attributes.Select(att => new Biome(cb, att.name)).ToList() : new List<Biome>()));
 
-            RegisterMethod(new Method<CelestialBody, string>("Name", cb => cb?.displayName));
+            RegisterMethod(new Method<CelestialBody, string>("Name", cb => cb != null ? cb.name : ""));
 
             RegisterMethod(new Method<CelestialBody, double>("Multiplier", cb => cb != null ? GameVariables.Instance.GetContractDestinationWeight(cb) : 1.0));
 
             RegisterMethod(new Method<CelestialBody, double>("RemoteTechCoverage", cb => cb != null ? RemoteTechCoverage(cb) : 0.0d, false));
             RegisterMethod(new Method<CelestialBody, string, double>("SCANsatCoverage", SCANsatCoverage, false));
 
-            RegisterGlobalFunction(new Function<CelestialBody>("HomeWorld", () => filteredBodies.Where(cb => cb.isHomeWorld).First()));
-            RegisterGlobalFunction(new Function<CelestialBody>("Sun", () => filteredBodies[0]));
-            RegisterGlobalFunction(new Function<List<CelestialBody>>("AllBodies", () => filteredBodies.Where(cb => cb != null && cb.Radius >= BARYCENTER_THRESHOLD).ToList()));
+            RegisterGlobalFunction(new Function<CelestialBody>("HomeWorld", () => FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).First()));
+            RegisterGlobalFunction(new Function<CelestialBody>("Sun", () => FlightGlobals.Bodies[0]));
+            RegisterGlobalFunction(new Function<List<CelestialBody>>("AllBodies", () => FlightGlobals.Bodies.Where(cb => cb != null && cb.Radius >= BARYCENTER_THRESHOLD).ToList()));
             RegisterGlobalFunction(new Function<List<CelestialBody>>("OrbitedBodies", () => BodiesForItem(ProgressItem.ORBITED).ToList(), false));
             RegisterGlobalFunction(new Function<List<CelestialBody>>("LandedBodies", () => BodiesForItem(ProgressItem.LANDED).ToList(), false));
             RegisterGlobalFunction(new Function<List<CelestialBody>>("EscapedBodies", () => BodiesForItem(ProgressItem.ESCAPED).ToList(), false));
@@ -117,7 +112,7 @@ namespace ContractConfigurator.ExpressionParser
         {
             if (typeof(U) == typeof(string))
             {
-                return (U)(object)value.displayName;
+                return (U)(object)value.CleanDisplayName();
             }
             return base.ConvertType<U>(value);
         }
@@ -206,12 +201,8 @@ namespace ContractConfigurator.ExpressionParser
             {
                 return CelestialBodyType.NOT_APPLICABLE;
             }
-            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-            {
-                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-            }
-            if (cb.isStar || cb.pqsController == null)
+			
+			if (cb.isStar || cb.pqsController == null)
             {
                 return CelestialBodyType.SUN;
             }

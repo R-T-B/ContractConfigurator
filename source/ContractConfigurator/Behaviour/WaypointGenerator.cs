@@ -144,12 +144,7 @@ namespace ContractConfigurator.Behaviour
                 LoggingUtil.LogVerbose(this, "Initializing waypoint generator.");
                 foreach (WaypointData wpData in waypoints)
                 {
-                    List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-                    if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-                    {
-                        filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-                    }
-                    CelestialBody body = filteredBodies.Where<CelestialBody>(b => b.name == wpData.waypoint.celestialName).FirstOrDefault();
+                    CelestialBody body = FlightGlobals.Bodies.Where<CelestialBody>(b => b.name == wpData.waypoint.celestialName).FirstOrDefault();
                     if (body == null)
                     {
                         continue;
@@ -442,12 +437,7 @@ namespace ContractConfigurator.Behaviour
                             {
                                 try
                                 {
-                                    List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-                                    if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-                                    {
-                                        filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-                                    }
-                                    CelestialBody body = filteredBodies.Where(b => b.name == wpData.waypoint.celestialName).First();
+                                    CelestialBody body = FlightGlobals.Bodies.Where(b => b.name == wpData.waypoint.celestialName).First();
                                     wpData.pqsCity = body.GetComponentsInChildren<PQSCity>(true).Where(pqs => pqs.name == x).First();
                                 }
                                 catch (Exception e)
@@ -582,12 +572,8 @@ namespace ContractConfigurator.Behaviour
                 if (wpData.pqsCity != null)
                 {
                     LoggingUtil.LogDebug(this, "Adjusting PQS City offset coordinates for waypoint {0}", wpData.waypoint.name);
-                    List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-                    if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-                    {
-                        filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-                    }
-                    CelestialBody body = filteredBodies.Where(b => b.name == wpData.waypoint.celestialName).First();
+
+                    CelestialBody body = FlightGlobals.Bodies.Where(b => b.name == wpData.waypoint.celestialName).First();
                     GeneratePQSCityCoordinates(wpData, body);
                     SetAltitude(wpData, body);
                     wpData.pqsCity = null;
@@ -619,12 +605,7 @@ namespace ContractConfigurator.Behaviour
                 string pqsCityName = ConfigNodeUtil.ParseValue<string>(child, "pqsCity", null);
                 if (pqsCityName != null)
                 {
-                    List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-                    if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-                    {
-                        filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-                    }
-                    CelestialBody body = filteredBodies.Where(b => b.name == wpData.waypoint.celestialName).First();
+                    CelestialBody body = FlightGlobals.Bodies.Where(b => b.name == wpData.waypoint.celestialName).First();
                     wpData.pqsCity = body.GetComponentsInChildren<PQSCity>(true).Where(pqs => pqs.name == pqsCityName).First();
                     wpData.pqsOffset = ConfigNodeUtil.ParseValue<Vector3d>(child, "pqsOffset");
                 }

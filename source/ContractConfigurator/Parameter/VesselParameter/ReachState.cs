@@ -102,12 +102,7 @@ namespace ContractConfigurator.Parameters
         protected void CreateDelegates()
         {
             // Filter for celestial bodies
-            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-            {
-                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-            }
-            if (targetBodies != null && targetBodies.Count() != filteredBodies.Count)
+            if (targetBodies != null && targetBodies.Count() != FlightGlobals.Bodies.Count)
             {
                 AddParameter(new ParameterDelegate<Vessel>(Localizer.Format("#cc.param.CollectScience.destination", BodyList()),
                     v => targetBodies.Contains(v.mainBody)));

@@ -49,12 +49,7 @@ namespace ContractConfigurator.ExpressionParser
 
         private static Location KSCLocation()
         {
-            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-            {
-                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-            }
-            CelestialBody home = filteredBodies.Where(cb => cb.isHomeWorld).First();
+            CelestialBody home = FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).First();
             PQSCity ksc = home.GetComponentsInChildren<PQSCity>(true).Where(pqs => pqs.name == "KSC").First();
 
             return new Location(home, home.GetLatitude(ksc.transform.position), home.GetLongitude(ksc.transform.position));

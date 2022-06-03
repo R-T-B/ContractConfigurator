@@ -649,25 +649,19 @@ namespace ContractConfigurator
                             return true;
                         }
                     }
-                    if (obj.ErrorPrefix(configNode).Contains("KopernicusWatchdog"))
-                    {
-                        valid = false;
-                    }
-                    else
-                    {
-                        LoggingUtil.LogError(obj, "{0}: Error parsing {1}", obj.ErrorPrefix(configNode), key);
 
-                        // Return immediately on deferred load error
-                        if (e.GetType() == typeof(DataNode.ValueNotInitialized))
-                        {
-                            DataNode.ValueNotInitialized vni = e as DataNode.ValueNotInitialized;
-                            LoggingUtil.LogException(new Exception(StringBuilderCache.Format("Unknown identifier '@{0}'.", vni.key)));
-                            return false;
-                        }
-                        LoggingUtil.LogException(e);
+                    LoggingUtil.LogError(obj, "{0}: Error parsing {1}", obj.ErrorPrefix(configNode), key);
 
-                        valid = false;
+                    // Return immediately on deferred load error
+                    if (e.GetType() == typeof(DataNode.ValueNotInitialized))
+                    {
+                        DataNode.ValueNotInitialized vni = e as DataNode.ValueNotInitialized;
+                        LoggingUtil.LogException(new Exception(StringBuilderCache.Format("Unknown identifier '@{0}'.", vni.key)));
+                        return false;
                     }
+                    LoggingUtil.LogException(e);
+
+                    valid = false;
                 }
                 finally
                 {
@@ -951,13 +945,8 @@ namespace ContractConfigurator
 
         public static CelestialBody ParseCelestialBodyValue(string celestialName)
         {
-            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-            {
-                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-            }
-            CelestialBody result = filteredBodies.Where(cb => cb.name == celestialName).FirstOrDefault();
-            if ((result == null) && (!celestialName.Equals("KopernicusWatchdog")))
+            CelestialBody result = FlightGlobals.Bodies.Where(cb => cb.name == celestialName).FirstOrDefault();
+            if (result == null)
             {
                 throw new ArgumentException("'" + celestialName + "' is not a valid CelestialBody.");
             }

@@ -86,12 +86,7 @@ namespace ContractConfigurator.Behaviour
             // Set the homeworld
             if (homeworld == null)
             {
-                List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-                if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-                {
-                    filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-                }
-                homeworld = filteredBodies.Where(cb => cb.isHomeWorld).FirstOrDefault();
+                homeworld = FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).FirstOrDefault();
             }
 
             foreach (ProtoCrewMember pcm in awardees.Where(pcm => pcm != null))

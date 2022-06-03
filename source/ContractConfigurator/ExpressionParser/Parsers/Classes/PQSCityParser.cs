@@ -29,12 +29,8 @@ namespace ContractConfigurator.ExpressionParser
             RegisterMethod(new Method<PQSCity, Location>("Location", GetLocation, false));
             RegisterMethod(new Method<PQSCity, string>("Name", city => city != null ? city.name : null));
             RegisterMethod(new Method<PQSCity, CelestialBody>("CelestialBody", city => city != null ? city.celestialBody : null));
-            List<CelestialBody> filteredBodies = FlightGlobals.Bodies;
-            if (filteredBodies.Contains(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody))
-            {
-                filteredBodies.Remove(Kopernicus.RuntimeUtility.RuntimeUtility.mockBody);
-            }
-            RegisterGlobalFunction(new Function<PQSCity>("KSC", () => filteredBodies.Where(cb => cb.isHomeWorld).First().GetComponentsInChildren<PQSCity>(true).Where(city => city.name == "KSC").First()));
+
+            RegisterGlobalFunction(new Function<PQSCity>("KSC", () => FlightGlobals.Bodies.Where(cb => cb.isHomeWorld).First().GetComponentsInChildren<PQSCity>(true).Where(city => city.name == "KSC").First()));
         }
 
         public PQSCityParser()
